@@ -471,7 +471,8 @@ Feature Engineering Service (Python, Pandas)
 
 ---
 ## Complete Workflow
-<img width="1014" height="554" alt="image" src="https://github.com/user-attachments/assets/7fb74b33-f0bc-4b01-b178-5a97f4c127f5" />
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/60529fa9-82f0-468e-96da-924254e94db3" />
+
 
 ## 8. 🚨 Adversarial Defense & Anti-Spoofing Strategy
 
