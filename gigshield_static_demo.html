@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GigShield - Ultimate Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #0d1117;
+    --bg-card: #161b22;
+    --bg-input: #010409;
+    --bg-nav: #010409;
+    --border-color: #30363d;
+    --text-main: #e6edf3;
+    --text-muted: #8b949e;
+    --primary: #58a6ff;
+    --primary-hover: #1f6feb;
+    --success: #3fb950;
+    --danger: #f85149;
+    --warning: #d29922;
+    --fraud: #a371f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app-container { max-width: 800px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative;}
+  
+  /* Header & Navigation */
+  .header { padding: 20px 24px 0 24px; border-bottom: 1px solid var(--border-color); background-color: var(--bg-nav); position: sticky; top: 0; z-index: 10; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .logo { font-weight: 800; font-size: 1.4rem; background: linear-gradient(135deg, #58a6ff, #bc8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .logout-btn { background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 12px; color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 600; }
+  .logout-btn:hover { color: var(--text-main); background: var(--bg-card); }
+  
+  /* Scrollable Tabs */
+  .nav-tabs { display: none; overflow-x: auto; white-space: nowrap; padding-bottom: 12px; gap: 16px; scrollbar-width: none; }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab { color: var(--text-muted); background: none; border: none; font-size: 14px; font-weight: 500; cursor: pointer; padding: 6px 10px; border-radius: 6px; transition: all 0.2s; }
+  .nav-tab:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+  .nav-tab.active { color: var(--primary); background: rgba(88, 166, 255, 0.1); font-weight: 600; }
+
+  .main-content { flex: 1; padding: 32px 24px 80px 24px; }
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  
+  h2 { font-weight: 700; font-size: 1.5rem; letter-spacing: -0.5px; margin-bottom: 8px;}
+  h3 { font-weight: 600; font-size: 1.1rem; }
+  p.subtitle { color: var(--text-muted); margin-bottom: 24px; font-size: 14px; }
+  .text-green { color: var(--success); }
+  .text-red { color: var(--danger); }
+  .text-yellow { color: var(--warning); }
+  
+  .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 24px;}
+  .input-group { margin-bottom: 16px; }
+  .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #c9d1d9; }
+  .input-group input { width: 100%; padding: 12px 14px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); font-size: 15px; outline: none; }
+  .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2); }
+  
+  .btn { padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; border: 1px solid transparent; text-align: center; width: 100%; transition: all 0.2s; }
+  .btn-primary { background-color: #238636; color: #fff; border-color: rgba(240, 246, 252, 0.1); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:not(:disabled):hover { background-color: #2ea043; }
+  .btn-outline { background-color: var(--bg-input); color: var(--text-main); border-color: var(--border-color); }
+  .btn-outline:not(:disabled):hover { border-color: #8b949e; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-simulate-rain { background-color: var(--primary-hover); color: white; width: auto; font-size: 14px; padding: 10px 20px; box-shadow: 0 4px 14px rgba(31, 111, 235, 0.4);border-radius: 30px;}
+  .btn-simulate-heat { background-color: var(--danger); color: white; width: auto; font-size: 14px; padding: 10px 20px; box-shadow: 0 4px 14px rgba(248, 81, 73, 0.4);border-radius: 30px;}
+  
+  /* Toggle Switch */
+  .switch { display: inline-flex; align-items: center; gap: 12px; font-weight: 600; font-size: 14px;}
+  .toggle { position: relative; width: 44px; height: 24px; background: var(--success); border-radius: 12px; cursor: pointer; transition: background 0.3s;}
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 22px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: left 0.3s; }
+  .toggle.off { background: var(--bg-input); border: 1px solid var(--border-color); }
+  .toggle.off::after { left: 2px; background: var(--text-muted); }
+
+  /* Plan Cards */
+  .plan-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media(min-width: 600px) { .plan-grid { grid-template-columns: repeat(3, 1fr); } }
+  .plan-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; position: relative; display: flex; flex-direction: column;}
+  .plan-card.recommended { border-color: var(--primary); box-shadow: 0 0 15px rgba(88, 166, 255, 0.1); }
+  .reco-badge { position: absolute; top: -10px; right: 16px; background-color: var(--primary); color: #0d1117; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; }
+  .price { margin: 12px 0; display: flex; align-items: baseline; }
+  .currency { font-size: 16px; color: var(--text-muted); font-weight: 600; }
+  .amount { font-size: 32px; font-weight: 800; margin-left: 2px; }
+  .period { font-size: 14px; color: var(--text-muted); margin-left: 4px; }
+  .feature-list { list-style: none; margin-bottom: 24px; flex: 1;}
+  .feature-list li { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+
+  /* Smart Advisor Banner */
+  .advisor-banner { background: rgba(210, 153, 34, 0.1); border: 1px solid var(--warning); padding: 16px; border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;}
+  
+  /* Dashboard Stats */
+  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .stat-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; text-align: center; }
+  .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+  .stat-val { font-size: 28px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+  /* Claims List */
+  .claim-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px;}
+  .claim-item { padding: 16px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; }
+  
+  /* Heat Map Grid */
+  .heatmap-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 24px; padding: 16px; background: #000; border-radius: 12px; border: 1px solid var(--border-color); }
+  .heat-box { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9); transition: all 0.5s; text-align: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
+  /* Enhanced Map Colors */
+  .heat-low { background-color: #238636; border: 2px solid #2ea043; opacity: 0.8;}
+  .heat-med { background-color: #9e6a03; border: 2px solid #d29922; color: #fff; transform: scale(1.02); z-index: 2;}
+  .heat-high { background-color: #da3633; border: 2px solid #f85149; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 20px rgba(248, 81, 73, 0.8); transform: scale(1.05); z-index: 3;}
+
+  /* Huge Number Display */
+  .huge-number { font-size: 64px; font-weight: 800; line-height: 1; margin: 16px 0; display: inline-block;}
+  
+  /* Fraud Badge */
+  .badge-trust { background: rgba(63, 185, 80, 0.15); color: var(--success); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; border: 1px solid var(--success);}
+
+  /* Bhasha Voice Assistant */
+  .voice-btn { position: fixed; bottom: 32px; right: 32px; width: 60px; height: 60px; border-radius: 30px; background: linear-gradient(135deg, #1f6feb, #a371f7); display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; box-shadow: 0 8px 24px rgba(31, 111, 235, 0.4); z-index: 100; border: none; transition: transform 0.2s;}
+  .voice-btn:hover { transform: scale(1.1); }
+  .voice-popup { position: fixed; bottom: 100px; right: 32px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: 16px; width: 260px; display: none; z-index: 100; box-shadow: 0 12px 32px rgba(0,0,0,0.8); }
+
+  /* Toast Notification */
+  .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 16px 24px; border-radius: 12px; border: 1px solid #3fb950; background-color: rgba(26, 61, 26, 0.95); backdrop-filter: blur(10px); color: #fff; font-weight: 600; font-size: 14px; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.6); transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); white-space: pre-line; text-align: center; }
+  .toast.show { bottom: 40px; }
+  .toast-warning { border-color: var(--danger); background-color: rgba(61, 15, 26, 0.95); }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <header class="header">
+    <div class="header-top">
+      <div class="logo">🛡️ GigShield</div>
+      <div style="display:flex; gap: 12px; align-items:center;">
+        <span class="badge-trust" id="topTrustBadge" style="display:none;">🟢 Trusted Worker</span>
+        <button id="logoutBtn" class="logout-btn" style="display:none;" onclick="app.logout()">Log Out</button>
+      </div>
+    </div>
+    <!-- 9 TABS -->
+    <div id="navTabs" class="nav-tabs">
+      <button class="nav-tab" onclick="app.switchTab('dashboard')">Dashboard</button>
+      <button class="nav-tab" onclick="app.switchTab('zone')">Zone</button>
+      <button class="nav-tab" onclick="app.switchTab('riskscore')">Risk Score</button>
+      <button class="nav-tab" onclick="app.switchTab('forecast')">AI Forecast</button>
+      <button class="nav-tab" onclick="app.switchTab('premium')">Premium</button>
+      <button class="nav-tab" onclick="app.switchTab('claim')">Claim</button>
+      <button class="nav-tab" onclick="app.switchTab('payout')">Payout</button>
+      <button class="nav-tab" onclick="app.switchTab('heatmap')">Heat Map</button>
+      <button class="nav-tab" onclick="app.switchTab('admin')">Admin</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    
+    <!-- 1. REGISTRATION VIEW -->
+    <div id="view-register" class="view active">
+      <div class="card">
+        <h2>Create Your Account</h2>
+        <p class="subtitle">Join GigShield for instant income protection.</p>
+        <form id="registerForm" onsubmit="app.handleRegister(event)">
+          <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" id="regName" required placeholder="Ravi Kumar">
+          </div>
+          <div class="input-group">
+            <label>Phone Number</label>
+            <input type="tel" id="regPhone" required placeholder="9876543210 (Fake OTP auto-verified)">
+          </div>
+          <div class="input-group">
+            <label>City</label>
+            <input type="text" id="regCity" required placeholder="Hyderabad (Try this!)">
+          </div>
+          <div class="input-group">
+            <label>UPI ID (For payouts)</label>
+            <input type="text" id="regUpi" required placeholder="ravi@ybl">
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 16px;">Verify & Continue ➔</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. PREMIUM (SMART ADVISOR) VIEW -->
+    <div id="view-premium" class="view">
+      
+      <!-- Smart Coverage Advisor -->
+      <div class="advisor-banner" id="advisorBanner">
+        <div>
+          <h3 style="color: var(--warning); margin-bottom: 4px;">⚠️ Smart Coverage Advisor</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Next week has 3 rainy days and severe heat expected. Upgrade to Standard Plan for better coverage.</p>
+        </div>
+        <button class="btn btn-outline" style="width: auto; font-size: 13px; padding: 8px 16px; border-color: var(--warning); color: var(--warning);" onclick="app.selectPlan('Standard', 55, 1000)">Upgrade Plan</button>
+      </div>
+
+      <h2 style="text-align:center;">Weekly Shield Plans</h2>
+      <p class="subtitle" style="text-align:center;">Protect your income from external disruptions.</p>
+      
+      <div class="plan-grid">
+        <div class="plan-card">
+          <h3>Basic</h3>
+          <div class="price"><span class="currency">₹</span><span class="amount">30</span><span class="period">/week</span></div>
+          <ul class="feature-list"><li>✓ Covers Rain</li><li>✓ Covers Heat</li></ul>
+          <button class="btn btn-outline" onclick="app.selectPlan('Basic', 30, 500)" id="btnTopBasic">Activate</button>
+        </div>
+
+        <div class="plan-card recommended">
+          <div class="reco-badge">Most Popular</div>
+          <h3>Standard</h3>
+          <div class="price"><span class="currency">₹</span><span class="amount">55</span><span class="period">/week</span></div>
+          <ul class="feature-list"><li>✓ Covers Rain</li><li>✓ Covers Heat</li><li>✓ Covers AQI</li></ul>
+          <button class="btn btn-primary" onclick="app.selectPlan('Standard', 55, 1000)" id="btnTopStandard">Activate</button>
+        </div>
+
+        <div class="plan-card">
+          <h3>Full</h3>
+          <div class="price"><span class="currency">₹</span><span class="amount">90</span><span class="period">/week</span></div>
+          <ul class="feature-list"><li>✓ All 5 Triggers</li><li>✓ 24/7 Support</li></ul>
+          <button class="btn btn-outline" onclick="app.selectPlan('Full', 90, 2000)" id="btnTopFull">Activate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. DASHBOARD VIEW -->
+    <div id="view-dashboard" class="view">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+        <div>
+          <h2>Hi, <span id="dashName"></span> 👋</h2>
+          <p class="subtitle" style="margin:4px 0 0 0;"><span id="dashPlanName">No Plan</span> Active</p>
+        </div>
+        
+        <!-- Worker Activity Toggle -->
+        <div class="switch">
+          <span style="font-size: 13px; color: var(--text-muted);" id="toggleStatusTxt">Duty: Active</span>
+          <div class="toggle" id="dutyToggle" onclick="app.toggleDuty()"></div>
+        </div>
+      </div>
+
+      <!-- Income Protected View -->
+      <div class="card" style="background: linear-gradient(135deg, rgba(88,166,255,0.05), rgba(63,185,80,0.1)); border-color: var(--success); padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Premium Paid</div>
+            <div style="font-size: 18px; font-weight: 700;">₹<span id="dashPremiumPaid">0</span></div>
+          </div>
+          <div style="width: 1px; height: 40px; background: var(--border-color);"></div>
+          <div style="text-align: right;">
+            <div style="font-size: 13px; color: var(--success); font-weight: 600; text-transform: uppercase;">Income Protected</div>
+            <div style="font-size: 28px; font-weight: 800; color: var(--success);">₹<span id="dashTotalPayoutTop">0</span></div>
+          </div>
+        </div>
+        <div style="margin-top: 16px; font-size: 14px; font-weight: 600; color: var(--primary);" id="roiMessage">Protecting your week!</div>
+      </div>
+
+      <div class="stat-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 24px;">
+        <div class="stat-card">
+          <div class="stat-label">Trust Score</div>
+          <div class="stat-val text-green" id="dashTrust">100/100</div>
+          <div class="stat-sub">🟢 Highly Trusted</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">🤖 AI Risk Level</div>
+          <div class="stat-val text-green" id="dashRiskLevel">LOW</div>
+          <div class="stat-sub">Based on weather</div>
+        </div>
+      </div>
+
+      <!-- Trigger Section -->
+      <h3 style="margin-bottom: 12px;">Trigger System (Dev Controls)</h3>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button id="simRainBtn" class="btn-simulate-rain" onclick="app.simulateDisruption('Rain', 170)">🌧️ Simulate Rain Trigger</button>
+        <button id="simHeatBtn" class="btn-simulate-heat" onclick="app.simulateDisruption('Heat', 150)">🌡️ Simulate Heat Trigger</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: 12px;">Click a trigger above, then check the Claims, Payout, and Heat Map tabs to see the platform logic execute.</p>
+    </div>
+
+    <!-- 4. ZONE VIEW -->
+    <div id="view-zone" class="view">
+      <h2>🌍 Zone Risk Profile</h2>
+      <p class="subtitle">Your designated delivery region & historical data from India.</p>
+      
+      <!-- INDIA MAP IFRAME -->
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.4674712079075!2d78.36195761502447!3d17.447551088042457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x19688beb557fa0ee!2sKondapur%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1655000000000!5m2!1sen!2sin" 
+              width="100%" height="200" style="border:1px solid var(--border-color); border-radius: 12px; margin-bottom: 20px; filter: invert(90%) hue-rotate(180deg);" 
+              allowfullscreen="" loading="lazy"></iframe>
+
+      <div class="card" style="text-align: center;">
+        <div class="stat-label" style="font-size: 14px;">City + Area</div>
+        <div class="stat-val" style="font-size: 28px; color: var(--primary);" id="zoneFull">Hyderabad – Kondapur</div>
+        
+        <div style="margin: 24px 0; display: inline-block; padding: 8px 16px; background: rgba(63, 185, 80, 0.1); color: var(--success); border-radius: 20px; font-weight: 600;">
+          STATUS: ACTIVE 🟢
+        </div>
+
+        <div style="border-top: 1px solid var(--border-color); padding-top: 24px; text-align: left;">
+          <h3 style="margin-bottom: 16px; text-align: center;">Historical Disruption Data</h3>
+          <div style="display: flex; justify-content: space-around;">
+            <div style="text-align: center;">
+              <div style="font-size: 32px; font-weight: 800;">12</div>
+              <div style="font-size: 13px; color: var(--text-muted);">Rain days/month</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 32px; font-weight: 800;">18</div>
+              <div style="font-size: 13px; color: var(--text-muted);">Heat days/month</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. RISK SCORE VIEW -->
+    <div id="view-riskscore" class="view">
+      <h2>📊 Live Risk Engine</h2>
+      <p class="subtitle">AI-calculated disruption probability based on conditions.</p>
+      <div class="card" style="text-align: center; padding: 48px 24px;">
+        <div id="scoreCircle" class="huge-number text-green">24<span style="font-size:32px; color:var(--text-muted); font-weight:500;">/100</span></div>
+        <div id="scoreLabel" style="font-size: 20px; font-weight: 700; text-transform: uppercase;" class="text-green">Low Risk</div>
+        
+        <div style="margin-top: 24px; padding: 16px; background: var(--bg-input); border-radius: 8px; border: 1px solid var(--border-color); text-align: left;">
+          <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">AI Reason Engine:</div>
+          <ul id="scoreReasonList" style="list-style: none; font-size: 14px;">
+            <li>✅ Normal weather conditions</li>
+            <li>✅ Low disruption zone history</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. AI FORECAST VIEW -->
+    <div id="view-forecast" class="view">
+      <h2>🤖 AI Forecast</h2>
+      <p class="subtitle">Parametric triggers prediction based on external APIs.</p>
+      <div class="card" style="text-align: center; padding: 40px 24px;">
+        <div style="font-size: 64px; margin-bottom: 16px;" id="forecastIcon">🌤️</div>
+        <h3 id="forecastMsg" style="font-size: 24px;">No disruption expected</h3>
+        <p style="color: var(--text-muted); margin-top: 16px; font-size: 13px;">Data sourced securely from OpenWeather & IMD integrations.</p>
+      </div>
+    </div>
+
+    <!-- 7. CLAIM VIEW -->
+    <div id="view-claim" class="view">
+      <h2>📋 Claim Transparency</h2>
+      <p class="subtitle">Detailed breakdown of why and how payouts happened.</p>
+      <div id="claimEmpty" class="card" style="color: #8b949e; text-align: center;">No claims generated yet. Simulate a trigger on the Dashboard!</div>
+      <div id="claimList" class="claim-list" style="display:none; margin-top: 0;"></div>
+    </div>
+
+    <!-- 8. PAYOUT VIEW -->
+    <div id="view-payout" class="view">
+      <h2>💸 Payout & Fraud UI</h2>
+      <p class="subtitle">Instant verification and credit records.</p>
+      <div class="card" id="payoutCard" style="text-align: center; display: none;">
+        <div style="font-size: 48px; margin-bottom: 8px;">🏦</div>
+        <div class="huge-number text-green" id="payAmount"></div>
+        <div style="font-size: 18px; font-weight: 600; margin-bottom: 24px;">Credited to <span id="payUpi"></span></div>
+        
+        <!-- Fraud Awareness UI -->
+        <div style="background: var(--bg-input); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); text-align: left; margin-bottom: 16px;">
+          <div style="font-size: 13px; color: var(--primary); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">Automated Fraud Scan</div>
+          <div style="display:flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;"><span>📍 GPS & Location Match</span> <span>✅ Valid</span></div>
+          <div style="display:flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;"><span>📱 Worker Activity App</span> <span id="payoutDutyCheck">✅ Active</span></div>
+          <div style="display:flex; justify-content: space-between; font-size: 14px;"><span>🧩 Claim Pattern History</span> <span>✅ Normal</span></div>
+        </div>
+
+        <div style="background: var(--bg-input); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); text-align: left;">
+          <div style="margin-bottom: 8px;"><span style="color: var(--text-muted); font-size: 13px;">Transaction ID:</span> <strong id="payTxn" style="float: right;"></strong></div>
+          <div style="margin-bottom: 8px;"><span style="color: var(--text-muted); font-size: 13px;">System Status:</span> <strong class="text-green" style="float: right;">Approved</strong></div>
+          <div><span style="color: var(--text-muted); font-size: 13px;">Timestamp:</span> <strong id="payTime" style="float: right; font-size: 12px;"></strong></div>
+        </div>
+      </div>
+      <div id="payoutEmpty" class="card" style="text-align: center; color: var(--text-muted);">
+        No payouts recorded yet. Simulate a trigger on the Dashboard!
+      </div>
+    </div>
+
+    <!-- 9. ADMIN VIEW -->
+    <div id="view-admin" class="view">
+      <h2>🧑‍💼 Admin Console</h2>
+      <p class="subtitle">Platform-wide statistics and metrics.</p>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-val" id="adUsers">1,024</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Claims (Global)</div>
+          <div class="stat-val" id="adClaims">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Payout Amount</div>
+          <div class="stat-val text-green" id="adPayout">₹0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Fraud Cases Blocked</div>
+          <div class="stat-val text-red">34</div>
+          <div class="stat-sub">GPS spoofing prevented</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. HEAT MAP VIEW -->
+    <div id="view-heatmap" class="view">
+      <h2>🔥 AI Risk Heat Map</h2>
+      <p class="subtitle">Real-time geographical risk zones updated by "HeatShield Atlas".</p>
+      <div class="card" style="padding: 16px;">
+        <div style="display: flex; gap: 16px; font-size: 13px; font-weight: 600; justify-content: center; margin-bottom: 12px;">
+          <span style="color: var(--success);">🟢 Safe Zone</span>
+          <span style="color: var(--warning);">🟡 Medium</span>
+          <span style="color: var(--danger);">🔴 High Risk</span>
+        </div>
+        <div class="heatmap-container" id="heatGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Voice Assistant -->
+<button class="voice-btn" onclick="app.toggleVoice()">🎤</button>
+<div class="voice-popup" id="voicePopup">
+  <div style="font-weight: 700; margin-bottom: 8px; color: var(--fraud);">Bhasha Voice Assistant</div>
+  <p style="font-size: 13px; color: var(--text-main);" id="voiceText">"Hi Ravi! Kondapur looks clear right now. No disruptions expected today. Your Standard plan is active."</p>
+</div>
+
+<div id="toast" class="toast">✅ <span id="toastMsg"></span></div>
+
+<script>
+const app = {
+  db: { user: null, claims: [], globalClaims: 1250, globalPayout: 205000 },
+  simulating: false,
+  isDutyActive: true,
+  lastTrigger: null,
+  
+  init() {
+    // We use a fresh localStorage key so it doesn't collide with previous bugs
+    const saved = localStorage.getItem('gigshieldMegaV2');
+    if (saved) {
+      this.db = JSON.parse(saved);
+      if (this.db.user && this.db.user.plan) {
+        document.getElementById('navTabs').style.display = 'flex';
+        this.switchTab('dashboard');
+      } else if (this.db.user) {
+        this.switchTab('premium');
+      } else {
+        this.switchTab('register');
+      }
+    } else {
+      this.switchTab('register');
+    }
+  },
+
+  save() { localStorage.setItem('gigshieldMegaV2', JSON.stringify(this.db)); },
+
+  toggleDuty() {
+    this.isDutyActive = !this.isDutyActive;
+    const t = document.getElementById('dutyToggle');
+    const txt = document.getElementById('toggleStatusTxt');
+    
+    if(this.isDutyActive) {
+      t.classList.remove('off');
+      txt.innerText = 'Duty: Active';
+    } else {
+      t.classList.add('off');
+      txt.innerText = 'Duty: Inactive';
+      this.showToast('⚠️ Marked Inactive. Triggers will NOT pay out.', true);
+    }
+  },
+
+  switchTab(tabId) {
+    // Handle error suppression
+    try {
+      document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+      document.getElementById(`view-${tabId}`).classList.add('active');
+    } catch(e) { console.error('Tab switch error', e); }
+    
+    const isReg = tabId === 'register';
+    document.getElementById('logoutBtn').style.display = isReg ? 'none' : 'block';
+    
+    const badge = document.getElementById('topTrustBadge');
+    if (badge) badge.style.display = isReg || !this.db.user?.plan ? 'none' : 'inline-block';
+    
+    if (!isReg && this.db.user?.plan) {
+      document.getElementById('navTabs').style.display = 'flex';
+    }
+
+    document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+    const btn = document.querySelector(`.nav-tab[onclick="app.switchTab('${tabId}')"]`);
+    if(btn) btn.classList.add('active');
+    
+    this.renderAll();
+  },
+
+  handleRegister(e) {
+    e.preventDefault();
+    this.db.user = {
+      name: document.getElementById('regName').value.trim() || 'Ravi',
+      phone: document.getElementById('regPhone').value.trim(),
+      city: document.getElementById('regCity').value.trim() || 'Hyderabad',
+      upi: document.getElementById('regUpi').value.trim() || 'ravi@ybl',
+      plan: null, price: 0, coverage: 0
+    };
+    this.save();
+    this.switchTab('premium');
+  },
+
+  selectPlan(name, price, cov) {
+    this.db.user.plan = name;
+    this.db.user.price = price;
+    this.db.user.coverage = cov;
+    this.save();
+    this.showToast(`🎉 ${name} Shield Activated!`);
+    document.getElementById('navTabs').style.display = 'flex';
+    document.getElementById('topTrustBadge').style.display = 'inline-block';
+    this.switchTab('dashboard');
+  },
+
+  simulateDisruption(type, amount) {
+    if (this.simulating) return;
+    
+    if (!this.isDutyActive) {
+      this.showToast(`🚨 ${type} trigger received, but you are marked INACTIVE. Fraud algorithms blocked payout.`, true);
+      this.lastTrigger = type; // Trigger the UX update (red maps) but no claim!
+      this.renderAll();
+      return;
+    }
+
+    this.simulating = true;
+    const btn = document.getElementById(type === 'Rain' ? 'simRainBtn' : 'simHeatBtn');
+    if(btn) {
+      const oldText = btn.innerHTML;
+      btn.innerText = 'Simulating...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        this.simulating = false;
+        btn.innerHTML = oldText;
+        btn.disabled = false;
+        
+        this.lastTrigger = type;
+        const txnId = 'TXN' + Math.random().toString(36).substring(2, 10).toUpperCase();
+        
+        // Push the amount
+        const claim = {
+          id: txnId, amount: amount, type: type, time: new Date().toLocaleString()
+        };
+        
+        this.db.claims.unshift(claim);
+        this.db.globalClaims++;
+        this.db.globalPayout += amount;
+        this.save();
+        
+        this.showToast(`🚨 GigShield detected ${type}! ₹${amount} automatically credited to your UPI.`);
+        this.renderAll();
+      }, 1000);
+    }
+  },
+
+  renderAll() {
+    try {
+      if(!this.db.user) return;
+      const u = this.db.user;
+      
+      // Premium updates
+      if(u.plan && document.getElementById('advisorBanner')) {
+        document.getElementById('advisorBanner').style.display = u.plan === 'Standard' || u.plan === 'Full' ? 'none' : 'flex';
+        document.getElementById('btnTopBasic').innerText = u.plan === 'Basic' ? 'Current Plan' : 'Switch Plan';
+        document.getElementById('btnTopStandard').innerText = u.plan === 'Standard' ? 'Current Plan' : 'Switch Plan';
+        document.getElementById('btnTopFull').innerText = u.plan === 'Full' ? 'Current Plan' : 'Switch Plan';
+      }
+
+      const cityZone = u.city || 'Hyderabad';
+      if(document.getElementById('zoneFull')) {
+        document.getElementById('zoneFull').innerText = `${cityZone} – Sub Zone IT Corridors`;
+      }
+      
+      // Calculate Total Pay for this user
+      const totalPay = this.db.claims.reduce((s, c) => s + c.amount, 0);
+      
+      if(document.getElementById('dashName')) document.getElementById('dashName').innerText = u.name.split(' ')[0];
+      if(document.getElementById('dashPlanName')) document.getElementById('dashPlanName').innerText = u.plan || 'No Plan';
+      if(document.getElementById('dashPremiumPaid')) document.getElementById('dashPremiumPaid').innerText = u.price || 0;
+      
+      // Unique IDs to prevent duplicate issues!
+      if(document.getElementById('dashTotalPayoutTop')) document.getElementById('dashTotalPayoutTop').innerText = totalPay;
+      if(document.getElementById('dashClaimCount')) document.getElementById('dashClaimCount').innerText = this.db.claims.length;
+      
+      // Income Protected Message
+      if(u.price > 0 && totalPay > 0 && document.getElementById('roiMessage')) {
+        const multiplier = Math.floor(totalPay / u.price);
+        document.getElementById('roiMessage').innerText = multiplier >= 1 ? `Amazing! You earned ${multiplier}x your premium back!` : 'Your income is currently protected.';
+      }
+
+      // Live Risk Logic based on trigger
+      const activeRisk = this.lastTrigger; 
+      let score = 24, label = 'Low Risk', colorClass = 'text-green', msgList = '<li>✅ Normal weather</li><li>✅ Low disruption zone</li>';
+      
+      if (activeRisk === 'Rain') {
+        score = 82; label = 'High Risk'; colorClass = 'text-red';
+        msgList = '<li style="color:var(--danger)">❌ Heavy rain forecast</li><li style="color:var(--danger)">❌ High disruption zone active</li>';
+        document.getElementById('forecastIcon').innerText = '⛈️';
+        document.getElementById('forecastMsg').innerText = 'Heavy Rain Alert Triggered';
+        document.getElementById('forecastMsg').style.color = 'var(--danger)';
+        document.getElementById('voiceText').innerText = `"Alert ${u.name}! Heavy rainfall in Kondapur. Stay safe. We have triggered an auto-claim of ₹170 to your account."`;
+      } else if (activeRisk === 'Heat') {
+        score = 88; label = 'High Risk'; colorClass = 'text-red';
+        msgList = '<li style="color:var(--danger)">❌ Extreme Heatwave (>42°C)</li><li style="color:var(--warning)">⚠️ Moderate disruption zone</li>';
+        document.getElementById('forecastIcon').innerText = '🔥';
+        document.getElementById('forecastMsg').innerText = 'Extreme Heatwave Triggered';
+        document.getElementById('forecastMsg').style.color = 'var(--danger)';
+        document.getElementById('voiceText').innerText = `"Warning ${u.name}! Extreme temperatures detected. Take water breaks. A heat claim has been credited."`;
+      }
+
+      // Update Dashboard Risk Label
+      if(document.getElementById('dashRiskLevel')) {
+        document.getElementById('dashRiskLevel').innerText = label.toUpperCase();
+        document.getElementById('dashRiskLevel').className = `stat-val ${colorClass}`;
+      }
+      
+      if(document.getElementById('scoreCircle')) {
+        document.getElementById('scoreCircle').innerHTML = `${score}<span style="font-size:32px; color:var(--text-muted); font-weight: 500;">/100</span>`;
+        document.getElementById('scoreCircle').className = `huge-number ${colorClass}`;
+        document.getElementById('scoreLabel').innerText = label;
+        document.getElementById('scoreLabel').className = colorClass;
+        document.getElementById('scoreReasonList').innerHTML = msgList;
+      }
+
+      // CLAIMS LIST RENDER
+      const cList = document.getElementById('claimList');
+      const cEmpty = document.getElementById('claimEmpty');
+      const pEmpty = document.getElementById('payoutEmpty');
+      const pCard = document.getElementById('payoutCard');
+      
+      if (this.db.claims.length === 0) {
+        if(cEmpty) cEmpty.style.display = 'block';
+        if(cList) cList.style.display = 'none';
+        if(pEmpty) pEmpty.style.display = 'block';
+        if(pCard) pCard.style.display = 'none';
+      } else {
+        if(cEmpty) cEmpty.style.display = 'none';
+        if(cList) cList.style.display = 'flex';
+        
+        cList.innerHTML = this.db.claims.map(c => {
+          return `
+          <div class="card" style="margin-bottom: 0;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+              <div>
+                <div style="font-weight: 700; font-size: 16px;">Trigger: ${c.type === 'Rain' ? 'Heavy Rain' : 'Deep Heatwave'}</div>
+                <div style="font-size: 13px; color: var(--text-muted);">Timestamp: ${c.time}</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="text-green" style="font-weight: 800; font-size: 18px;">+₹${c.amount}</div>
+                <div class="badge-trust" style="border:none; padding: 2px 0;">Approved</div>
+              </div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div>Duration: <strong>2 hours</strong></div>
+              <div style="text-align: right;">Logic: <strong>₹85/hr × 2 hrs = ₹${c.amount}</strong></div>
+            </div>
+          </div>
+          `;
+        }).join('');
+        
+        // LATEST PAYOUT RENDER
+        const latest = this.db.claims[0];
+        if(pEmpty) pEmpty.style.display = 'none';
+        if(pCard) pCard.style.display = 'block';
+        
+        document.getElementById('payAmount').innerText = '₹' + latest.amount;
+        document.getElementById('payUpi').innerText = u.upi;
+        document.getElementById('payTxn').innerText = latest.id;
+        document.getElementById('payTime').innerText = latest.time;
+        document.getElementById('payoutDutyCheck').innerHTML = '✅ Active'; // Because it was paid, it must have been active
+      }
+
+      // ADMIN TAB
+      document.getElementById('adClaims').innerText = (this.db.globalClaims + this.db.claims.length).toLocaleString();
+      document.getElementById('adPayout').innerText = '₹' + (this.db.globalPayout + totalPay).toLocaleString();
+      
+      // HEAT MAP GRID (12 Boxes)
+      const grid = document.getElementById('heatGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        const zones = ['Madhapur', 'Gachibowli', 'Kondapur', 'Jubilee Hills', 'Banjara Hills', 'Kukatpally', 'Ameerpet', 'Begumpet', 'SR Nagar', 'Secunderabad', 'LBN', 'Uppal'];
+        
+        zones.forEach((z, i) => {
+          let riskClass = 'heat-low'; // Base: Green Safe Zone
+          
+          if (activeRisk) {
+            // When trigger fired, highlight core areas heavily
+            if (i === 2 || i === 0 || i === 1 || i === 3) {
+              riskClass = 'heat-high'; // Red
+            } else if(i < 8) {
+              riskClass = 'heat-med'; // Yellow Default surrounding
+            }
+          } else {
+            // No trigger, minor natural hotspots
+            if (i === 5 || i === 9) riskClass = 'heat-med';
+          }
+          grid.innerHTML += `<div class="heat-box ${riskClass}">${z}</div>`;
+        });
+      }
+    } catch(err) {
+      console.error("Render Error:", err);
+    }
+  },
+
+  toggleVoice() {
+    const pop = document.getElementById('voicePopup');
+    pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
+  },
+
+  logout() {
+    localStorage.removeItem('gigshieldStaticMegaDB');
+    localStorage.removeItem('gigshieldMegaV2'); // Also clear the fresh one just in case
+    this.db = { user: null, claims: [], globalClaims: 1250, globalPayout: 205000 };
+    document.getElementById('navTabs').style.display = 'none';
+    document.getElementById('topTrustBadge').style.display = 'none';
+    document.getElementById('registerForm').reset();
+    document.getElementById('voicePopup').style.display = 'none';
+    this.lastTrigger = null;
+    this.switchTab('register');
+  },
+
+  showToast(msg, isWarning = false) {
+    const el = document.getElementById('toast');
+    document.getElementById('toastMsg').innerText = msg;
+    if (isWarning) el.classList.add('toast-warning');
+    else el.classList.remove('toast-warning');
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 4000);
+  }
+};
+
+// Start app
+app.init();
+</script>
+
+</body>
+</html>
