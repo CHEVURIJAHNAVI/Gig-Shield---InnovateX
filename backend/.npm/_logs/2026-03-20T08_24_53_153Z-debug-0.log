@@ -1,0 +1,65 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.6.2
+2 info using node@v24.12.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend\.npmrc
+5 silly config load:file:C:\Users\jahna\.npmrc
+6 silly config load:file:C:\Users\jahna\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--cache" ".npm"
+9 verbose logfile logs-max:10 dir:C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend\.npm\_logs\2026-03-20T08_24_53_153Z-
+10 verbose logfile C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend\.npm\_logs\2026-03-20T08_24_53_153Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+13 silly idealTree buildDeps
+14 silly fetch manifest cors@^2.8.5
+15 silly packumentCache full:https://registry.npmjs.org/cors cache-miss
+16 http fetch GET 200 https://registry.npmjs.org/cors 480ms (cache miss)
+17 silly fetch manifest dotenv@^16.0.3
+18 silly packumentCache full:https://registry.npmjs.org/dotenv cache-miss
+19 silly fetch manifest express@^4.18.2
+20 silly packumentCache full:https://registry.npmjs.org/express cache-miss
+21 http fetch GET 200 https://registry.npmjs.org/npm 756ms
+22 silly fetch manifest mongoose@^7.5.0
+23 silly packumentCache full:https://registry.npmjs.org/mongoose cache-miss
+24 silly fetch manifest nodemon@^3.0.1
+25 silly packumentCache full:https://registry.npmjs.org/nodemon cache-miss
+26 silly placeDep ROOT cors@ OK for: gigshield-backend@1.0.0 want: ^2.8.5
+27 silly placeDep ROOT dotenv@ OK for: gigshield-backend@1.0.0 want: ^16.0.3
+28 silly placeDep ROOT express@ OK for: gigshield-backend@1.0.0 want: ^4.18.2
+29 silly placeDep ROOT mongoose@ OK for: gigshield-backend@1.0.0 want: ^7.5.0
+30 silly placeDep ROOT nodemon@ OK for: gigshield-backend@1.0.0 want: ^3.0.1
+31 verbose type system
+32 verbose stack FetchError: Invalid response body while trying to fetch https://registry.npmjs.org/cors: ENOENT: no such file or directory, mkdir 'C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend\.npm\_cacache\content-v2\sha512\b5\04'
+32 verbose stack     at C:\Program Files\nodejs\node_modules\npm\node_modules\minipass-fetch\lib\body.js:170:15
+32 verbose stack     at async Response.json (C:\Program Files\nodejs\node_modules\npm\node_modules\minipass-fetch\lib\body.js:75:17)
+32 verbose stack     at async RegistryFetcher.packument (C:\Program Files\nodejs\node_modules\npm\node_modules\pacote\lib\registry.js:98:25)
+32 verbose stack     at async RegistryFetcher.manifest (C:\Program Files\nodejs\node_modules\npm\node_modules\pacote\lib\registry.js:128:23)
+32 verbose stack     at async #fetchManifest (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:1227:20)
+32 verbose stack     at async #nodeFromEdge (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:1065:19)
+32 verbose stack     at async #buildDepStep (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:929:11)
+32 verbose stack     at async Arborist.buildIdealTree (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:182:7)
+32 verbose stack     at async Promise.all (index 1)
+32 verbose stack     at async Arborist.reify (C:\Program Files\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\reify.js:114:5)
+33 error code EEXIST
+34 error syscall mkdir
+35 error path C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend\.npm\_cacache\content-v2\sha512\b5\04
+36 error errno EEXIST
+37 error Invalid response body while trying to fetch https://registry.npmjs.org/cors: ENOENT: no such file or directory, mkdir 'C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend\.npm\_cacache\content-v2\sha512\b5\04'
+38 error File exists: C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend\.npm\_cacache\content-v2\sha512\b5\04
+39 error Remove the existing file and try again, or run npm
+40 error with --force to overwrite files recklessly.
+41 silly unfinished npm timer reify 1773995093771
+42 silly unfinished npm timer reify:loadTrees 1773995093776
+43 verbose cwd C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend
+44 verbose os Windows_NT 10.0.26200
+45 verbose node v24.12.0
+46 verbose npm  v11.6.2
+47 notice
+47 notice New [33mminor[39m version of npm available! [33m11.6.2[39m -> [34m11.12.0[39m
+47 notice Changelog: [34mhttps://github.com/npm/cli/releases/tag/v11.12.0[39m
+47 notice To update run: [4mnpm install -g npm@11.12.0[24m
+47 notice  { force: true, Symbol(proc-log.meta): true }
+48 verbose exit 1
+49 verbose code 1
+50 error A complete log of this run can be found in: C:\Users\jahna\.gemini\antigravity\scratch\gigshield\backend\.npm\_logs\2026-03-20T08_24_53_153Z-debug-0.log
