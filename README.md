@@ -20,7 +20,6 @@
 11. [Development Plan](#11-development-plan)
 12. [Analytics Dashboard](#12-analytics-dashboard)
 13. [Unique Features / Innovation](#13-unique-features--innovation)
-14. [2-Minute Video Script](#14-2-minute-video-script)
 
 ---
 
@@ -93,16 +92,8 @@ Swiggy's order assignment system goes down for 2–3 hours. No orders ping. The 
 
 ### Daily Workflow
 
-```
-6:30 AM  → Wake up, check Swiggy app for surge zones
-7:00 AM  → Log in, start accepting breakfast delivery orders
-9:00 AM  → Peak breakfast hours (₹150–₹200 earned)
-12:00 PM → Lunch peak (₹200–₹250 earned)
-2:00 PM  → Slow period — idle, waiting for orders
-5:30 PM  → Evening snack surge begins
-8:00 PM  → Dinner peak — highest earning window
-10:30 PM → Log off
-```
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/89b35ea7-1727-4b00-b6f4-a1e464b07fd3" />
+
 
 ### Earnings Pattern
 
@@ -479,6 +470,8 @@ Feature Engineering Service (Python, Pandas)
 ```
 
 ---
+## Complete Workflow
+<img width="1014" height="554" alt="image" src="https://github.com/user-attachments/assets/7fb74b33-f0bc-4b01-b178-5a97f4c127f5" />
 
 ## 8. 🚨 Adversarial Defense & Anti-Spoofing Strategy
 
